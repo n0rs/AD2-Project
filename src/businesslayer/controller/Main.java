@@ -43,12 +43,6 @@ public class Main {
         System.out.println(DatenbankManager.findePasswortTokenMitEmail(email));
 
 
-        // Zum Testen Läuft das Programm 10 Minuten
-        try {
-            Thread.sleep(600_000);            
-        } catch (InterruptedException e) {
-            System.out.println("Sleep fehlgeschlagen");
-        }
         DatenbankManager.verbindungTrennen();
         System.exit(0);
     }
