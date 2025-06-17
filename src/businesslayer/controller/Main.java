@@ -41,7 +41,6 @@ public class Main {
         Presenter.finalizeRegistrierung();
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-                System.out.println("Bitte wählen Sie: [1] Aktivieren, [2] Abbrechen");
                 int tokenChoice;
                 try {
                     tokenChoice = Integer.parseInt(scanner.nextLine());

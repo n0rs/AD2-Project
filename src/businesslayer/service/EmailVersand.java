@@ -18,10 +18,7 @@ public class EmailVersand extends UnicastRemoteObject implements EmailVersandInt
 
     @Override
     public void welcomeEmail(String empfaenger) throws RemoteException {
-        String welcome = """
-                          Empf\u00e4nger: " + empfaenger + "\\nBetreff: Aktivierungslink \\nWillkommen im Webshop! 
-                          Ihr Account wurde best\u00e4tigt. Haben Sie sonst noch einen Wunsch?""" //
-        //
+        String welcome =  "Empfänger: " + empfaenger + "\nBetreff: Willkommen \n Willkommen im Webshop! Ihre Account wurde bestätigt";
         ;
         System.out.println(welcome);
     }
