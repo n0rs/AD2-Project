@@ -36,26 +36,36 @@ public class Main {
 
 
     public static Kunde tokenDialog(Kunde k) throws RemoteException, NotBoundException, MalformedURLException {
-
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         EmailVersandInterface em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
         Presenter.finalizeRegistrierung();
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                System.out.println("Bitte wählen Sie: [1] Aktivieren, [2] Abbrechen");
+                int tokenChoice;
+                try {
+                    tokenChoice = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+                    continue;
+                }
 
-        while(true) {
-            int tokenChoice = scanner.nextInt();
-            if(tokenChoice == 1) {
-                db.updateStatus(k.getId());
-                k = db.findeKundeNachEmail(k.getEmail());
-                em.welcomeEmail(k.getEmail());
-                return k;
+                if (tokenChoice == 1) {
+                    db.updateStatus(k.getId());
+                    k = db.findeKundeNachEmail(k.getEmail());
+                    em.welcomeEmail(k.getEmail());
+                    // scanner.close(); // Scanner auf System.in sollte nicht geschlossen werden!
+                    return k;
+                }
+                if (tokenChoice == 2) {
+                    Presenter.tokenAbgelaufen();
+                    db.kundenLoeschenId(k.getId());
+                    System.out.println("hat geklappt");
+                    System.exit(0);
+                    return null;
+                }
+                System.out.println("Bitte 1 oder 2 eingeben.");
             }
-            if(tokenChoice == 2) {
-                Presenter.tokenAbgelaufen();
-                db.kundenLoeschenId(k.getId());
-                System.out.println("hat geklappt");
-                return null;
-            } 
         }
     }
 }
