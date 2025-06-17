@@ -46,8 +46,15 @@ import java.util.List;
 import java.util.Properties;
 import businesslayer.objekte.Kunde;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class DatenbankManager {
+
+public class DatenbankManager extends UnicastRemoteObject implements DatenbankManagerInterface {
+
+    public DatenbankManager() throws RemoteException {
+        super();
+    }
 
     private static String URL;
     private static String BENUTZERNAME;
@@ -73,7 +80,8 @@ public class DatenbankManager {
         }
 
     // Verbindung aufbauen
-    public static void verbindungAufbauen() {
+
+    public void verbindungAufbauen() throws RemoteException {
         try {
             // DriverManager ist eine Klasse, die für die Verwaltung von JDBC-Treibern verantwortlich ist
             // JDBC ist eine API, die es Java-Anwendungen ermöglicht, auf verschiedene Datenbanken zuzugreifen
@@ -86,7 +94,7 @@ public class DatenbankManager {
     }
 
     // Verbindung trennen
-    public static void verbindungTrennen() {
+    public void verbindungTrennen() throws RemoteException {
         if (connection != null) {
             try {
                 // close() ist eine Methode der Connection Klasse
@@ -101,7 +109,7 @@ public class DatenbankManager {
     }
 
     // Kunde anlegen
-    public static void kundeAnlegen(String email, String password) {
+    public void kundeAnlegen(String email, String password) throws RemoteException {
         // ? ist ein Platzhalter für einen Parameter in der SQL-Abfrage
         // PreparedStatement ist eine Schnittstelle, die SQL-Abfragen mit Platzhaltern unterstützt
         String query = "INSERT INTO nutzer (email, password) VALUES (?, ?)";
@@ -116,7 +124,7 @@ public class DatenbankManager {
     }
 
     /// Löscht alle Nutzer mit einer Liste von IDs
-    public static void kundenLoeschenIds(List<Integer> userIds) {
+    public void kundenLoeschenIds(List<Integer> userIds) throws RemoteException {
     String query = "DELETE FROM nutzer WHERE id = ?";
     try (PreparedStatement deleteStmt = connection.prepareStatement(query)) {
         for (int userId : userIds) {
@@ -130,7 +138,7 @@ public class DatenbankManager {
     }
     
     // Kunden ID anhand der E-Mail finden
-    public static int findeKundenId(String email) {
+    public int findeKundenId(String email) throws RemoteException {
         String selectQuery = "SELECT id FROM nutzer WHERE email = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
@@ -146,7 +154,7 @@ public class DatenbankManager {
     }
 
     // E-Mail-Verifizierungseintrag erstellen
-    public static void emailVerificationEintragErstellen(int user_id, String token) {
+    public void emailVerificationEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO email_verification (user_id, token, expires_at) VALUES (?, ?, ?)";
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
             insertStmt.setInt(1, user_id);
@@ -160,7 +168,7 @@ public class DatenbankManager {
     }
 
     // Gibt eine Liste aller User-IDs mit abgelaufenem E-Mail-Token zurück
-    public static List<Integer> abgelaufeneEmailTokenFinden() {
+    public List<Integer> abgelaufeneEmailTokenFinden() throws RemoteException {
     List<Integer> userIds = new ArrayList<>();
     String selectQuery = "SELECT user_id FROM email_verification WHERE expires_at < NOW()";
     try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
@@ -175,7 +183,7 @@ public class DatenbankManager {
     }
 
     // Passwort-Reset-Eintrag erstellen
-    public static void passwortResetEintragErstellen(int user_id, String token) {
+    public void passwortResetEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO password_reset (user_id, token, expires_at) VALUES (?, ?, ?)";
         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
             insertStatement.setInt(1, user_id);
@@ -189,7 +197,7 @@ public class DatenbankManager {
     }
 
     // Abgelaufene Passwort-Reset-Token finden
-    public static List<Integer> abgelaufenePasswortTokenfinden() {
+    public List<Integer> abgelaufenePasswortTokenfinden() throws RemoteException {
         List<Integer> userIds = new ArrayList<>();
         String selectQuery = "SELECT user_id FROM password_reset WHERE expires_at < NOW()";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
@@ -204,7 +212,7 @@ public class DatenbankManager {
     }
 
     // Suche nach E-Mail
-    public static Kunde findeKundeNachEmail(String email) {
+    public Kunde findeKundeNachEmail(String email) throws RemoteException {
         String selectQuery = "SELECT id, email, password FROM nutzer WHERE email = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
@@ -223,7 +231,7 @@ public class DatenbankManager {
     }
 
     // Finde EmailToken über email
-    public static String findeEmailTokenMitEmail(String email) {
+    public String findeEmailTokenMitEmail(String email) throws RemoteException {
         String selectQuery = "SELECT token FROM email_verification WHERE user_id = (SELECT id FROM nutzer WHERE email = ?)";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
@@ -239,7 +247,7 @@ public class DatenbankManager {
     }
 
     // Finde PasswortToken über email
-    public static String findePasswortTokenMitEmail(String email) {
+    public String findePasswortTokenMitEmail(String email) throws RemoteException {
         String selectQuery = "SELECT token FROM password_reset WHERE user_id = (SELECT id FROM nutzer WHERE email = ?)";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
