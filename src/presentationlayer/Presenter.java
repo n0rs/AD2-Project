@@ -11,4 +11,6 @@ public class Presenter {
         return "Willkommen bei der Kunderegistrierung!\n" +
                "Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich zu registrieren.\n";
     }
+
+    
 }
