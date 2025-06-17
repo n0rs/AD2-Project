@@ -1,9 +1,4 @@
-// javac -cp "lib/*" -d ./bin ./webshop/Main.java ./webshop/businessLayer/Objekte/*.java ./webshop/businessLayer/service/*.java ./webshop/businessLayer/validation/*.java ./webshop/dataAccessLayer/*.java ./webshop/presentationLayer/*.java kompiliert Programm
-// java -cp ".\bin;lib\*" webshop.Main füht Main.java aus
-
 package businesslayer.controller;
-
-
 
 import businesslayer.objekte.Kunde;
 import businesslayer.service.AutomatischeTokenVerwaltung;
