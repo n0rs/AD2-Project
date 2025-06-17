@@ -1,12 +1,12 @@
 package dataaccesslayer;
 
-import java.rmi.Remote;
+
 import java.rmi.RemoteException;
 import java.util.List;
 
 import businesslayer.objekte.Kunde;
 
-public interface DatenbankManagerInterface extends Remote {
+public interface DatenbankManagerInterface extends java.rmi.Remote {
 
     public abstract void verbindungAufbauen() throws RemoteException;
     public abstract void verbindungTrennen() throws RemoteException;
