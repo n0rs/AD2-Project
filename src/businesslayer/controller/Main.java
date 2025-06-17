@@ -64,7 +64,6 @@ public class Main {
                     System.exit(0);
                     return null;
                 }
-                System.out.println("Bitte 1 oder 2 eingeben.");
             }
         }
     }
