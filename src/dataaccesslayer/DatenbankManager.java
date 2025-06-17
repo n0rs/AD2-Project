@@ -6,8 +6,6 @@ bzw. der Username und das Passwort legt ihr in der config.properties an
 führt die folgenden SQL-Befehle aus, um die Tabellen zu erstellen
 CREATE TABLE nutzer (
     id SERIAL PRIMARY KEY,
-    vorname VARCHAR(50) NOT NULL,
-    nachname VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
