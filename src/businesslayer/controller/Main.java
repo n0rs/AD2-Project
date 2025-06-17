@@ -11,12 +11,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public class Main {
+
     public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException, AlreadyBoundException {
         // Starten des RMI-Registry
         StartRegistry.startsRegistry(args);
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         db.verbindungAufbauen();
-        start();
+        Kunde kunde = start();
+        EmailVersand.sendeRegistrierungsEmail(db.findeEmailTokenMitEmail(kunde.getEmail()));
         db.verbindungTrennen();
         System.exit(0);
     }

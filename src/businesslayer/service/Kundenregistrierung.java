@@ -17,6 +17,8 @@ public class Kundenregistrierung {
             String passwort = PasswortPruefer.startePasswortPruefung(scanner);
             db.kundeAnlegen(email, passwort);
             Kunde kunde = db.findeKundeNachEmail(email);
+            db.emailVerificationEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
+            db.passwortResetEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
             return kunde;
         }
     }
