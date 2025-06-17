@@ -80,7 +80,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
 
     // Verbindung aufbauen
-
     public void verbindungAufbauen() throws RemoteException {
         try {
             // DriverManager ist eine Klasse, die für die Verwaltung von JDBC-Treibern verantwortlich ist
@@ -159,7 +158,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
             insertStmt.setInt(1, user_id);
             insertStmt.setString(2, token);
-            insertStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 60)); // 3600000 1 Stunde gültig
+            insertStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 1 Stunde gültig
             insertStmt.executeUpdate();
             System.out.println("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {
@@ -188,7 +187,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
             insertStatement.setInt(1, user_id);
             insertStatement.setString(2, token);
-            insertStatement.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 60)); // 3600000 = 1 Stunde gültig
+            insertStatement.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 = 1 Stunde gültig
             insertStatement.executeUpdate();
             System.out.println("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {

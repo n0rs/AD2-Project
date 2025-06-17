@@ -4,6 +4,7 @@ import businesslayer.objekte.Kunde;
 import businesslayer.service.*;
 import businesslayer.server.StartRegistry;
 import dataaccesslayer.*;
+import presentationlayer.Presenter;
 
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
@@ -26,12 +27,7 @@ public class Main {
     }
 
     public static Kunde start() throws RemoteException, MalformedURLException, NotBoundException {
-        System.out.println("""
-            
-        Willkommen bei der Kunderegistrierung!
-        Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich zu registrieren.
-        
-                """);
+        Presenter.introString();
         Kunde kunde = Kundenregistrierung.registriereKunde();
         System.out.println(kunde);
         return kunde;
