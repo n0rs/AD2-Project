@@ -12,8 +12,12 @@ public class Presenter {
                "Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich zu registrieren.\n";
     }
 
-    public static void  finalizeRegistrierung() {
+    public static void finalizeRegistrierung() {
          System.out.println("1. Token anklicken\n2.60 Minuten warten");
+    }
+
+    public static void tokenAbgelaufen() {
+        System.out.println("Token nicht innerhalb von einer Stunde angeklickt - Nutzer wird gelöscht");
     }
 
     

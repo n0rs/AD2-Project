@@ -121,14 +121,13 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
     }
 
     /// Löscht alle Nutzer mit einer Liste von IDs
-    public void kundenLoeschenIds(List<Integer> userIds) throws RemoteException {
+    @Override
+    public void kundenLoeschenId(int user_id) throws RemoteException {
     String query = "DELETE FROM nutzer WHERE id = ?";
     try (PreparedStatement deleteStmt = connection.prepareStatement(query)) {
-        for (int userId : userIds) {
-            deleteStmt.setInt(1, userId);
-            deleteStmt.executeUpdate();
-            System.out.println("Nutzer mit ID " + userId + " wurde gelöscht (Verifizierung abgelaufen).");
-        }
+        deleteStmt.setInt(1, user_id);
+        deleteStmt.executeUpdate();
+        System.out.println("Nutzer mit ID " + user_id + " wurde gelöscht (Verifizierung abgelaufen).");
         } catch (SQLException e) {
             System.err.println("Fehler beim Löschen der Kunden: " + e.getMessage());
         }
@@ -261,7 +260,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
     }
 
     public void updateStatus(int user_id) throws RemoteException {
-        String updateQuery ="UPDATE nutzer SET is_active=true WHERE user_id= ?";
+        String updateQuery ="UPDATE nutzer SET is_active=true WHERE id= ?";
 
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
             updateStmt.setInt(1, user_id);

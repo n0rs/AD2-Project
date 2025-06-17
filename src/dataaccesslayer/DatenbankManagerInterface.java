@@ -10,7 +10,7 @@ public interface DatenbankManagerInterface extends java.rmi.Remote {
     public abstract void verbindungAufbauen() throws RemoteException;
     public abstract void verbindungTrennen() throws RemoteException;
     public abstract void kundeAnlegen(String email, String passwort) throws RemoteException;
-    public abstract void kundenLoeschenIds(List<Integer> ids) throws RemoteException;
+    public abstract void kundenLoeschenId(int user_id) throws RemoteException;
     public abstract int findeKundenId(String email) throws RemoteException;
     public abstract void emailVerificationEintragErstellen(int kundenId, String token) throws RemoteException;
     public abstract List<Integer> abgelaufeneEmailTokenFinden() throws RemoteException;

@@ -22,6 +22,7 @@ public class Kunde implements Serializable {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", is_active='" + activated + '\'' +
                 '}';
     }
     // Getter und Setter 

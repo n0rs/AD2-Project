@@ -34,9 +34,6 @@ public class Main {
         return kunde;
     }
 
-    public static void mainMenue() {
-
-    }
 
     public static Kunde tokenDialog(Kunde k) throws RemoteException, NotBoundException, MalformedURLException {
 
@@ -53,6 +50,12 @@ public class Main {
                 em.welcomeEmail(k.getEmail());
                 return k;
             }
+            if(tokenChoice == 2) {
+                Presenter.tokenAbgelaufen();
+                db.kundenLoeschenId(k.getId());
+                System.out.println("hat geklappt");
+                return null;
+            } 
         }
     }
 }
