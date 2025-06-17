@@ -3,7 +3,6 @@ package businesslayer.objekte;
 import java.io.Serializable;
 
 public class Kunde implements Serializable {
-    private static final long serialVersionUID = 1L;
     private int id; // 
     private String email;
     private String password;
@@ -15,12 +14,14 @@ public class Kunde implements Serializable {
         this.password = password;
     }
 
-    // Konstruktor ohne ID (beim Anlegen eines neuen Kunden)
-    public Kunde(String email, String password) {
-        this.email = email;
-        this.password = password;
+    @Override
+    public String toString() {
+        return "Kunde{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
-
     // Getter und Setter 
     public int getId() { 
         return id; 
