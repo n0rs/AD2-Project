@@ -1,10 +1,9 @@
 package dataaccesslayer;
 
 
+import businesslayer.objekte.Kunde;
 import java.rmi.RemoteException;
 import java.util.List;
-
-import businesslayer.objekte.Kunde;
 
 public interface DatenbankManagerInterface extends java.rmi.Remote {
 
@@ -20,4 +19,5 @@ public interface DatenbankManagerInterface extends java.rmi.Remote {
     public abstract Kunde findeKundeNachEmail(String email) throws RemoteException;
     public abstract String findeEmailTokenMitEmail(String email) throws RemoteException;
     public abstract String findePasswortTokenMitEmail(String email) throws RemoteException;
+    public abstract void updateStatus(int user_id) throws RemoteException;
 }

@@ -8,7 +8,6 @@ CREATE TABLE nutzer (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT FALSE
 );
 CREATE TABLE email_verification (
@@ -34,8 +33,11 @@ db.password=hier kommt euer Passwort rein
 package dataaccesslayer;
 
 // Java-Importe
+import businesslayer.objekte.Kunde;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -44,10 +46,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import businesslayer.objekte.Kunde;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 
 public class DatenbankManager extends UnicastRemoteObject implements DatenbankManagerInterface {
@@ -212,7 +210,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
 
     // Suche nach E-Mail
     public Kunde findeKundeNachEmail(String email) throws RemoteException {
-        String selectQuery = "SELECT id, email, password FROM nutzer WHERE email = ?";
+        String selectQuery = "SELECT * FROM nutzer WHERE email = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
             try (ResultSet rs = selectStmt.executeQuery()) {
@@ -220,7 +218,8 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                     int id = rs.getInt("id");
                     String mail = rs.getString("email");
                     String password = rs.getString("password");
-                    return new Kunde(id, mail, password);
+                    boolean activated = rs.getBoolean("is_active");
+                    return new Kunde(id, mail, password, activated);
                 }
             }
         } catch (SQLException e) {
@@ -259,6 +258,17 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             System.err.println("Fehler beim Finden des Kunden");
         }
         return null;
+    }
+
+    public void updateStatus(int user_id) throws RemoteException {
+        String updateQuery ="UPDATE nutzer SET is_active=true WHERE user_id= ?";
+
+        try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
+            updateStmt.setInt(1, user_id);
+            updateStmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Fehler beim Aktivierungslink");
+        }
     }
 }
 
