@@ -15,6 +15,7 @@ public class Kundenregistrierung {
         while(true) {
             String email = EmailPruefer.starteEmailPruefung(scanner);
             String passwort = PasswortPruefer.startePasswortPruefung(scanner);
+            db.verbindungAufbauen();
             db.kundeAnlegen(email, passwort);
             Kunde kunde = db.findeKundeNachEmail(email);
             db.emailVerificationEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
