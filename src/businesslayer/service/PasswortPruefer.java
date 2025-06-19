@@ -3,6 +3,8 @@ package businesslayer.service;
 
 import java.util.Scanner;
 
+import presentationlayer.Presenter;
+
 public class PasswortPruefer implements Pruefer {
     
     @Override
@@ -20,15 +22,15 @@ public class PasswortPruefer implements Pruefer {
     public static String startePasswortPruefung(Scanner scanner){
         String passwort;
         while(true) {
-            System.out.print("Wie lautet Ihr Passwort: ");
+            Presenter.printMessage("Wie lautet Ihr Passwort: ");
             passwort = scanner.nextLine();
 
             PasswortPruefer pruefer = new PasswortPruefer();
             if (pruefer.pruefe(passwort)) {
-                System.out.println("Starkes Passwort");
+                Presenter.printMessage("Starkes Passwort");
                 break;
             } else {
-                System.out.println("Schlechtes Passwort. Bitte versuchen Sie es erneut.");
+                Presenter.printMessage("Schlechtes Passwort. Bitte versuchen Sie es erneut.");
             }
         }
         return passwort;

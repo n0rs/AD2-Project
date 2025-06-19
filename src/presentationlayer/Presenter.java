@@ -1,6 +1,15 @@
 package presentationlayer;
 
 public class Presenter {
+
+    public static void printMessage(String message) {
+        System.out.println(message);
+    }
+
+    public static void printError(String error) {
+        System.err.println(error);
+    }
+
     public static String hauptmenuString() {
         return "Willkommen im Hauptmenü!\n" +
                "1. Passwort zurücksetzen\n" +

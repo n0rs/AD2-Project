@@ -34,6 +34,8 @@ package dataaccesslayer;
 
 // Java-Importe
 import businesslayer.objekte.Kunde;
+import presentationlayer.Presenter;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -73,7 +75,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             BENUTZERNAME = properties.getProperty("db.user");
             PASSWORT = properties.getProperty("db.password");
         } catch (IOException e) {
-            System.err.println("Fehler beim Laden der Konfigurationsdatei: " + e.getMessage());
+            Presenter.printError("Fehler beim Laden der Konfigurationsdatei: " + e.getMessage());
             }
         }
 
@@ -84,9 +86,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             // JDBC ist eine API, die es Java-Anwendungen ermöglicht, auf verschiedene Datenbanken zuzugreifen
             // In unserem Fall ist der Treiber in der lib/postgresql-42.7.5.jar Datei enthalten
             connection = DriverManager.getConnection(URL, BENUTZERNAME, PASSWORT);
-            System.out.println("Verbindung erfolgreich!");
+            Presenter.printMessage("Verbindung erfolgreich!");
         } catch (SQLException e) {
-            System.err.println("Fehler bei der Verbindung zur Datenbank: " + e.getMessage());
+            Presenter.printError("Fehler bei der Verbindung zur Datenbank: " + e.getMessage());
         }
     }
 
@@ -96,12 +98,12 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             try {
                 // close() ist eine Methode der Connection Klasse
                 connection.close();
-                System.out.println("Verbindung getrennt!");
+                Presenter.printMessage("Verbindung getrennt!");
             } catch (SQLException e) {
-                System.err.println("Fehler beim Schließen der Verbindung: " + e.getMessage());
+                Presenter.printError("Fehler beim Schließen der Verbindung: " + e.getMessage());
             }
         } else {
-            System.out.println("Keine Verbindung zum Trennen vorhanden.");
+            Presenter.printMessage("Keine Verbindung zum Trennen vorhanden.");
         }
     }
 
@@ -114,9 +116,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
             preparedStatement.executeUpdate();
-            System.out.println("Kunde mit email " + email + " wurde angelegt.");
+            Presenter.printMessage("Kunde mit email " + email + " wurde angelegt.");
         } catch (SQLException e) {
-            System.err.println("Fehler beim Anlegen des Kunden: " + e.getMessage());
+            Presenter.printError("Fehler beim Anlegen des Kunden: " + e.getMessage());
         }
     }
 
@@ -127,9 +129,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
     try (PreparedStatement deleteStmt = connection.prepareStatement(query)) {
         deleteStmt.setInt(1, user_id);
         deleteStmt.executeUpdate();
-        System.out.println("Nutzer mit ID " + user_id + " wurde gelöscht (Verifizierung abgelaufen).");
+        Presenter.printMessage("Nutzer mit ID " + user_id + " wurde gelöscht (Verifizierung abgelaufen).");
         } catch (SQLException e) {
-            System.err.println("Fehler beim Löschen der Kunden: " + e.getMessage());
+            Presenter.printError("Fehler beim Löschen der Kunden: " + e.getMessage());
         }
     }
     
@@ -144,7 +146,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Fehler beim Finden der Kunden-ID: " + e.getMessage());
+            Presenter.printError("Fehler beim Finden der Kunden-ID: " + e.getMessage());
         }
         return -1; // -1 bedeutet, dass kein Nutzer gefunden wurde
     }
@@ -157,9 +159,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             insertStmt.setString(2, token);
             insertStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 1 Stunde gültig
             insertStmt.executeUpdate();
-            System.out.println("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde erstellt.");
+            Presenter.printMessage("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {
-            System.err.println("Fehler beim Erstellen des E-Mail-Verifizierungseintrags: " + e.getMessage());
+            Presenter.printError("Fehler beim Erstellen des E-Mail-Verifizierungseintrags: " + e.getMessage());
         }
     }
 
@@ -173,7 +175,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             userIds.add(rs.getInt("user_id"));
         }
     } catch (SQLException e) {
-        System.err.println("Fehler beim Finden abgelaufener E-Mail-Token: " + e.getMessage());
+        Presenter.printError("Fehler beim Finden abgelaufener E-Mail-Token: " + e.getMessage());
     }
     return userIds;
     }
@@ -186,9 +188,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             insertStatement.setString(2, token);
             insertStatement.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 = 1 Stunde gültig
             insertStatement.executeUpdate();
-            System.out.println("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde erstellt.");
+            Presenter.printMessage("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {
-            System.err.println("Fehler beim Erstellen des Passwort-Reset-Eintrags: " + e.getMessage());
+            Presenter.printError("Fehler beim Erstellen des Passwort-Reset-Eintrags: " + e.getMessage());
         }
     }
 
@@ -202,7 +204,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                 userIds.add(rs.getInt("user_id"));
             }
         } catch (SQLException e) {
-            System.err.println("Fehler beim Finden abgelaufener Passwort-Reset-Token: " + e.getMessage());
+            Presenter.printError("Fehler beim Finden abgelaufener Passwort-Reset-Token: " + e.getMessage());
         }
         return userIds; 
     }
@@ -222,7 +224,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Fehler beim Finden des Kunden: " + e.getMessage());
+            Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
         }
         return null; // Kein Kunde gefunden
     }
@@ -238,7 +240,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Fehler beim Finden des Kunden");
+            Presenter.printError("Fehler beim Finden des Kunden");
         }
         return null;
     }
@@ -254,7 +256,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Fehler beim Finden des Kunden");
+            Presenter.printError("Fehler beim Finden des Kunden");
         }
         return null;
     }
@@ -266,7 +268,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             updateStmt.setInt(1, user_id);
             updateStmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Fehler beim Aktivierungslink");
+            Presenter.printError("Fehler beim Aktivierungslink");
         }
     }
 }

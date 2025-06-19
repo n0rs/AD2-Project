@@ -45,7 +45,7 @@ public class Main {
                 try {
                     tokenChoice = Integer.parseInt(scanner.nextLine());
                 } catch (NumberFormatException e) {
-                    System.out.println("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+                    Presenter.printError("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
                     continue;
                 }
 
@@ -59,7 +59,7 @@ public class Main {
                 if (tokenChoice == 2) {
                     Presenter.tokenAbgelaufen();
                     db.kundenLoeschenId(k.getId());
-                    System.out.println("hat geklappt");
+                    Presenter.printMessage("hat geklappt");
                     System.exit(0);
                     return null;
                 }
