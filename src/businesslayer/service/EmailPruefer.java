@@ -5,7 +5,6 @@ import dataaccesslayer.DatenbankManagerInterface;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import static java.util.Objects.isNull;
 import java.util.Scanner;
 import presentationlayer.Presenter;
 
@@ -27,9 +26,8 @@ public class EmailPruefer implements Pruefer {
         }
 
         try {
-             boolean isInDb = isNull(db.findeKundeNachEmail(email));
-             if(isInDb == false) {
-             return isInDb;
+             if(db.findeKundeNachEmail(email) != null) {
+                return false;
             }
           } catch (RemoteException e) {
             Presenter.printError("Fehler bei Emailpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
