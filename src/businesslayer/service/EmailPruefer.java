@@ -1,13 +1,20 @@
     // Implementiert Pruefer
 package businesslayer.service;
 
+import dataaccesslayer.DatenbankManagerInterface;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import static java.util.Objects.isNull;
 import java.util.Scanner;
-
 import presentationlayer.Presenter;
 
 public class EmailPruefer implements Pruefer {
     @Override
-    public boolean pruefe(String email) {
+    public boolean pruefe(String email) throws RemoteException, MalformedURLException, NotBoundException {
+
+        DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
+
         if (!email.contains("@")) {
             return false;
         }
@@ -18,11 +25,21 @@ public class EmailPruefer implements Pruefer {
         if (email.length() < 5 || email.length() > 50) {
             return false;
         }
+
+        try {
+             boolean isInDb = isNull(db.findeKundeNachEmail(email));
+             if(isInDb == false) {
+             return isInDb;
+            }
+          } catch (RemoteException e) {
+            Presenter.printError("Fehler bei Emailpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
+        }
+
         return true;
     }
 
     // Führt eine Schleife durch, in der der Benutzer E-Mail-Adressen eingeben kann
-    public static String starteEmailPruefung(Scanner scanner) {
+    public static String starteEmailPruefung(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
         String email;
         while (true) {
             Presenter.printMessage("Wie lautet Ihre E-Mail-Adresse: ");

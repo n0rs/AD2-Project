@@ -34,8 +34,6 @@ package dataaccesslayer;
 
 // Java-Importe
 import businesslayer.objekte.Kunde;
-import presentationlayer.Presenter;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -48,6 +46,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import presentationlayer.Presenter;
 
 
 public class DatenbankManager extends UnicastRemoteObject implements DatenbankManagerInterface {
@@ -210,7 +209,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
     }
 
     // Suche nach E-Mail
-    public Kunde findeKundeNachEmail(String email) throws RemoteException {
+    public Kunde findeKundeNachEmail(String email) throws RemoteException, NullPointerException {
         String selectQuery = "SELECT * FROM nutzer WHERE email = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
             selectStmt.setString(1, email);
@@ -223,8 +222,13 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                     return new Kunde(id, mail, password, activated);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            if(e instanceof NullPointerException) {
+                System.out.println("Kunde noch nicht vorhanden");
+                return null;
+            } else {
             Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
+            }
         }
         return null; // Kein Kunde gefunden
     }

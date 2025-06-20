@@ -1,14 +1,16 @@
 // Implementiert Pruefer
 package businesslayer.service;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Scanner;
-
 import presentationlayer.Presenter;
 
 public class PasswortPruefer implements Pruefer {
     
     @Override
-    public boolean pruefe(String password) {
+    public boolean pruefe(String password) throws RemoteException, MalformedURLException, NotBoundException {
         if (password.length() < 8) return false;
         // Nutzt regular expressions um zu prüfen ob das Passwort mindestens einen Buchstaben, eine Zahl und ein Sonderzeichen enthält
         // .* bedeutet beliebig viele Zeichen, [a-zA-Z] bedeutet ein Buchstabe, \\d bedeutet eine Zahl und [!@#$%^&*(),.?":{}|<>] bedeutet ein Sonderzeichen
@@ -19,7 +21,7 @@ public class PasswortPruefer implements Pruefer {
         return hasLetter && hasDigit && hasSpecial;
     }
 
-    public static String startePasswortPruefung(Scanner scanner){
+    public static String startePasswortPruefung(Scanner scanner) throws RemoteException, NotBoundException, MalformedURLException{
         String passwort;
         while(true) {
             Presenter.printMessage("Wie lautet Ihr Passwort: ");
