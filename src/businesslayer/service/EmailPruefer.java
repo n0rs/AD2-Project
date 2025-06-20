@@ -22,10 +22,15 @@ public class EmailPruefer implements Pruefer {
         if (email.length() < 5 || email.length() > 50) {
             return false;
         }
-        return checkUniqueness(email) != false;
+        if(checkUniqueness(email, null) == false) {
+            
+            return false;
+        }
+        return true;
     }
 
-    public boolean checkUniqueness(String email) throws RemoteException, MalformedURLException, NotBoundException {
+    @Override
+    public boolean checkUniqueness(String email, String wert) throws RemoteException, MalformedURLException, NotBoundException {
         
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         try {

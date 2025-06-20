@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+
+import dataaccesslayer.DatenbankManagerInterface;
 import presentationlayer.Presenter;
 
 public class PasswortPruefer implements Pruefer {
@@ -19,6 +21,25 @@ public class PasswortPruefer implements Pruefer {
         boolean hasDigit = password.matches(".*\\d+.*");
         boolean hasSpecial = password.matches(".*[!@#$%^&*(),.?\":{}|<>]+.*");
         return hasLetter && hasDigit && hasSpecial;
+    }
+
+    @Override
+    public boolean checkUniqueness(String password, String email) throws RemoteException, MalformedURLException, NotBoundException {
+        
+        DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
+        try {
+             if(db.findeKundeNachPasswort(password) != null) {
+                String compareMail = db.findeKundeNachPasswort(password).getEmail();
+                if(compareMail.equals(email)) {
+                return false; 
+            } else {
+                    return true;
+                }
+            }
+          } catch (RemoteException e) {
+            Presenter.printError("Fehler bei Passwortpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
+        }
+        return true;
     }
 
     public static String startePasswortPruefung(Scanner scanner) throws RemoteException, NotBoundException, MalformedURLException{

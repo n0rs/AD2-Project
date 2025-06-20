@@ -232,6 +232,27 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return null; // Kein Kunde gefunden
     }
 
+    public Kunde findeKundeNachPasswort(String searchword) throws RemoteException, NullPointerException {
+        String selectQuery = "SELECT * FROM nutzer WHERE password = ?";
+        try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
+            selectStmt.setString(1, searchword);
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String mail = rs.getString("email");
+                    String password = rs.getString("password");
+                    boolean activated = rs.getBoolean("is_active");
+                    return new Kunde(id, mail, password, activated);
+                }
+            }
+        } catch (Exception e) {
+            Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
+        }
+        return null; // Kein Kunde gefunden
+    }
+
+
+
     // Finde EmailToken über email
     public String findeEmailTokenMitEmail(String email) throws RemoteException {
         String selectQuery = "SELECT token FROM email_verification WHERE user_id = (SELECT id FROM nutzer WHERE email = ?)";
@@ -272,6 +293,18 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             updateStmt.executeUpdate();
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Aktivierungslink");
+        }
+    }
+
+    public void updatePassword(int user_id, String newPassword) throws RemoteException {
+         String updateQuery ="UPDATE nutzer SET passwort = ? WHERE id= ?";
+
+        try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
+            updateStmt.setInt(2, user_id);
+            updateStmt.setString(1, newPassword);
+            updateStmt.executeUpdate();
+        } catch (SQLException e) {
+            Presenter.printError("Fehler beim Passwort aktualisieren.");
         }
     }
 }
