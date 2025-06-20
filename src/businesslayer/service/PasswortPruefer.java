@@ -10,7 +10,7 @@ import presentationlayer.Presenter;
 public class PasswortPruefer implements Pruefer {
     
     @Override
-    public boolean pruefe(String password) throws RemoteException, MalformedURLException, NotBoundException {
+    public boolean pruefe(String password) throws RemoteException, MalformedURLException, NotBoundException{
         if (password.length() < 8) return false;
         // Nutzt regular expressions um zu prüfen ob das Passwort mindestens einen Buchstaben, eine Zahl und ein Sonderzeichen enthält
         // .* bedeutet beliebig viele Zeichen, [a-zA-Z] bedeutet ein Buchstabe, \\d bedeutet eine Zahl und [!@#$%^&*(),.?":{}|<>] bedeutet ein Sonderzeichen

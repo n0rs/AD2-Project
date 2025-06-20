@@ -10,9 +10,7 @@ import presentationlayer.Presenter;
 
 public class EmailPruefer implements Pruefer {
     @Override
-    public boolean pruefe(String email) throws RemoteException, MalformedURLException, NotBoundException {
-
-        DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
+    public boolean pruefe(String email) throws RemoteException, MalformedURLException, NotBoundException  {
 
         if (!email.contains("@")) {
             return false;
@@ -24,7 +22,12 @@ public class EmailPruefer implements Pruefer {
         if (email.length() < 5 || email.length() > 50) {
             return false;
         }
+        return checkUniqueness(email) != false;
+    }
 
+    public boolean checkUniqueness(String email) throws RemoteException, MalformedURLException, NotBoundException {
+        
+        DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         try {
              if(db.findeKundeNachEmail(email) != null) {
                 return false;
@@ -32,7 +35,6 @@ public class EmailPruefer implements Pruefer {
           } catch (RemoteException e) {
             Presenter.printError("Fehler bei Emailpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
         }
-
         return true;
     }
 

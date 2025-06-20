@@ -224,8 +224,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             }
         } catch (Exception e) {
             if(e instanceof NullPointerException) {
-                System.out.println("Kunde noch nicht vorhanden");
-                return null;
+                Presenter.printMessage("Benutzername noch nicht vergeben.");
             } else {
             Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
             }
