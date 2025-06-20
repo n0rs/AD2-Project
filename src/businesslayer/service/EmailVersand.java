@@ -2,7 +2,6 @@ package businesslayer.service;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
 import presentationlayer.Presenter;
 
 public class EmailVersand extends UnicastRemoteObject implements EmailVersandInterface {
@@ -20,7 +19,7 @@ public class EmailVersand extends UnicastRemoteObject implements EmailVersandInt
 
     @Override
     public void welcomeEmail(String empfaenger) throws RemoteException {
-        String welcome =  "Empfänger: " + empfaenger + "\nBetreff: Willkommen \n Willkommen im Webshop! Ihre Account wurde bestätigt";
+        String welcome =  "Empfänger: " + empfaenger + "\nBetreff: Willkommen \nWillkommen im Webshop! Ihre Account wurde bestätigt";
         ;
         Presenter.printMessage(welcome);
     }
