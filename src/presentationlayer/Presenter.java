@@ -12,12 +12,12 @@ public class Presenter {
 
     public static void hauptmenuString() {
         System.out.println("\nHauptmenü:\n" +
-               "1. Passwort zurücksetzen\n" +
-               "2. Neuer User\n");
+               "1. Ausloggen\n" +
+               "2. Passwort zurücksetzen\n");
     }
 
     public static void introString() {
-        System.out.println( "Bitte wähen: \n1. Registrieren\n2.Passwort vergessen");
+        System.out.println( "Bitte wählen: \n1.Registrieren\n2.Passwort vergessen");
     }
 
     public static void signUpString() {
@@ -30,7 +30,7 @@ public class Presenter {
     }
 
     public static void linkActivation() {
-         System.out.println("1. Token anklicken\n2.60 Minuten warten");
+        System.out.println("1. Token anklicken\n2. 60 Minuten warten");
     }
 
     public static void tokenAbgelaufen() {

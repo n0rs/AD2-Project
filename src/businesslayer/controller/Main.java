@@ -35,15 +35,25 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
     }
     if(op == 2) {
             System.out.println("Passwort Reset hier einbauen :)");
-            scanner.close();
-            System.exit(0);
+            db.updateStatus(op, false);
+            Kunde kunde = passwordReset(scanner);
+            if (kunde != null) {
+            em.passwortVergessen(db.findePasswortTokenMitEmail(kunde.getEmail()), kunde.getEmail());
+            kunde = tokenDialog(scanner, kunde);
+            PasswortVerwaltung.newPassword(kunde);
+            if (endDialog(scanner)) {
+                db.verbindungTrennen();
+                scanner.close(); // nur EINMAL am Ende schließen
+                System.exit(0);
+            }
+        }
     }
-    }
+}
 }
 
 
 public static Kunde passwordReset(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
-    return PasswortVerwaltung.newPassword();
+   return PasswortVerwaltung.prepareReset();
 }
     
 
@@ -92,7 +102,7 @@ public static Kunde tokenDialog(Scanner scanner, Kunde k) throws RemoteException
         try {
             int tokenChoice = Integer.parseInt(scanner.nextLine());
             if (tokenChoice == 1) {
-                db.updateStatus(k.getId());
+                db.updateStatus(k.getId(), true);
                 k = db.findeKundeNachEmail(k.getEmail());
                 em.welcomeEmail(k.getEmail());
                 return k;

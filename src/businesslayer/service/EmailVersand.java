@@ -26,9 +26,11 @@ public class EmailVersand extends UnicastRemoteObject implements EmailVersandInt
 
     @Override
     public void passwortVergessen(String token, String empfaenger) throws RemoteException {
-        String forgotpw = "Empfänger: \" + empfaenger + \"\\n" + //
-                        "Betreff: Aktivierungslink \\n" + //
-                        "Passwort vergessen? Bitte klicken Sie innerhalb von einer Stunde auf den folgenden token, um Ihr Passwort zurückzusetzen: \n " + token;
+        String forgotpw = """
+                          Empf\u00e4nger: """ + empfaenger + """
+                          Betreff: Aktivierungslink
+                          Passwort vergessen? Bitte klicken Sie innerhalb von einer Stunde auf den folgenden token, um Ihr Passwort zur\u00fcckzusetzen:
+                          """ + token;
         Presenter.printMessage(forgotpw);
     }
 }

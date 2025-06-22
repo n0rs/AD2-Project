@@ -33,6 +33,7 @@ public class EmailPruefer implements Pruefer {
     public boolean checkUniqueness(String email, String wert) throws RemoteException, MalformedURLException, NotBoundException {
         
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
+
         try {
              if(db.findeKundeNachEmail(email) != null) {
                 return false;
@@ -52,13 +53,14 @@ public class EmailPruefer implements Pruefer {
             email = scanner.nextLine();
 
             EmailPruefer EmailPruefer = new EmailPruefer(); // Erstellt ein neues Objekt vom Typ EmailPruefer zur Überprüfung der E-Mail
-            if (EmailPruefer.pruefe(email)) { // Ruft die Methode "pruefe" auf und prüft die eingegebene E-Mail
-                Presenter.printMessage("Gültige E-Mail-Adresse: " + email);
-                break;
-            } else {
-                Presenter.printError("Ungültige E-Mail-Adresse. Bitte versuchen Sie es erneut.");
-            }
+
+                 if (EmailPruefer.pruefe(email)) {
+                    Presenter.printMessage("Gültige E-Mail-Adresse: " + email);
+                    return email;
+                 } else {
+                    Presenter.printError("Ungültige E-Mail-Adresse. Bitte versuchen Sie es erneut.");
+                    continue;
+                }
         }
-        return email;
     }
 }
