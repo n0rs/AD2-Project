@@ -34,9 +34,11 @@ public class Presenter {
         System.out.println("1. Token anklicken\n2. 60 Minuten warten");
     }
 
-    public static void tokenAbgelaufen() {
+    public static void emailTokenAbgelaufen() {
         System.out.println("Token nicht innerhalb von einer Stunde angeklickt - Nutzer wird gelöscht");
     }
 
-    
+    public static void passwortTokenAbgelaufen() {
+        System.out.println("Token nicht innerhalb von einer Stunde angeklickt.");
+    }
 }

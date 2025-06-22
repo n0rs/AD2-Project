@@ -50,7 +50,6 @@ import presentationlayer.Presenter;
 
 
 public class DatenbankManager extends UnicastRemoteObject implements DatenbankManagerInterface {
-
     public DatenbankManager() throws RemoteException {
         super();
     }
@@ -289,9 +288,8 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
 
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
             updateStmt.setString(1, newPassword);
-             updateStmt.setInt(2, user_id);
+            updateStmt.setInt(2, user_id);
             updateStmt.executeUpdate();
-            Presenter.printMessage("Passwort erfolgreich aktualisiert.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Passwort aktualisieren.");
         }
