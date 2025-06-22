@@ -324,12 +324,13 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
 
     @Override
     public void updatePassword(int user_id, String newPassword) throws RemoteException {
-         String updateQuery ="UPDATE nutzer SET passwort = ? WHERE id= ?";
+         String updateQuery ="UPDATE nutzer SET password = ? WHERE id= ?";
 
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
-            updateStmt.setInt(2, user_id);
             updateStmt.setString(1, newPassword);
+             updateStmt.setInt(2, user_id);
             updateStmt.executeUpdate();
+            Presenter.printMessage("Passwort erfolgreich aktualisiert.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Passwort aktualisieren.");
         }

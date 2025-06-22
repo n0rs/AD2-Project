@@ -34,19 +34,24 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
         }
     }
     if(op == 2) {
-            System.out.println("Passwort Reset hier einbauen :)");
-            db.updateStatus(op, false);
             Kunde kunde = passwordReset(scanner);
-            if (kunde != null) {
+            db.updateStatus(kunde.getId(), false);
             em.passwortVergessen(db.findePasswortTokenMitEmail(kunde.getEmail()), kunde.getEmail());
             kunde = tokenDialog(scanner, kunde);
             PasswortVerwaltung.newPassword(kunde);
+            kunde = db.findeKundeNachEmail(kunde.getEmail());
+            System.out.println(kunde.toString());
             if (endDialog(scanner)) {
                 db.verbindungTrennen();
                 scanner.close(); // nur EINMAL am Ende schließen
                 System.exit(0);
-            }
         }
+    }
+    if(op == 3) {
+        Presenter.printMessage("Programm wird beendet.");
+        db.verbindungTrennen();
+        scanner.close(); // nur EINMAL am Ende schließen
+        System.exit(0);
     }
 }
 }

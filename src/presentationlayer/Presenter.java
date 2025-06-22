@@ -13,7 +13,8 @@ public class Presenter {
     public static void hauptmenuString() {
         System.out.println("\nHauptmenü:\n" +
                "1. Ausloggen\n" +
-               "2. Passwort zurücksetzen\n");
+               "2. Passwort zurücksetzen\n" +
+               "3. Programm beenden\n");
     }
 
     public static void introString() {
