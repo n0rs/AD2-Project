@@ -21,7 +21,10 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
     EmailVersandInterface em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
 
     while (true) {
-        Kunde kunde = start(scanner);
+        Presenter.introString();
+        int op = chooseIntroOption(scanner);
+        if(op == 1) {
+        Kunde kunde = startRegistration(scanner);
         em.sendeRegistrierungsEmail(db.findeEmailTokenMitEmail(kunde.getEmail()), kunde.getEmail());
         kunde = tokenDialog(scanner, kunde);
         if (endDialog(scanner)) {
@@ -30,15 +33,52 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
             System.exit(0);
         }
     }
+    if(op == 2) {
+            Kunde kunde = passwordReset(scanner);
+            db.updateStatus(kunde.getId(), false);
+            em.passwortVergessen(db.findePasswortTokenMitEmail(kunde.getEmail()), kunde.getEmail());
+            kunde = tokenDialog(scanner, kunde);
+            PasswortVerwaltung.newPassword(kunde);
+            kunde = db.findeKundeNachEmail(kunde.getEmail());
+            System.out.println(kunde.toString());
+    }
+    if(op == 3) {
+        Presenter.printMessage("Programm wird beendet.");
+        db.verbindungTrennen();
+        scanner.close(); // nur EINMAL am Ende schließen
+        System.exit(0);
+    }
+}
 }
 
-public static Kunde start(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
-    Presenter.introString();
+
+public static Kunde passwordReset(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
+   return PasswortVerwaltung.prepareReset();
+}
+    
+
+public static int chooseIntroOption(Scanner scanner) {
+    while (true) {
+   try {
+    int opt = Integer.parseInt(scanner.nextLine());
+    if(opt < 1 | opt > 2) {
+        continue;
+    }
+    return opt;
+   } catch (NumberFormatException e) {
+        Presenter.printError("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+        return -1;
+   }
+}
+}
+
+public static Kunde startRegistration(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
+    Presenter.signUpString();
     return Kundenregistrierung.registriereKunde(); // ggf. scanner mit übergeben
 }
 
 public static boolean endDialog(Scanner scanner) {
-    Presenter.printMessage("Möchten Sie fortfahren? \n1. Ja\n2. Nein");
+    Presenter.hauptmenuString();
     while (true) {
         try {
             int continueChoice = Integer.parseInt(scanner.nextLine());
@@ -56,13 +96,13 @@ public static boolean endDialog(Scanner scanner) {
 public static Kunde tokenDialog(Scanner scanner, Kunde k) throws RemoteException, NotBoundException, MalformedURLException {
     DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
     EmailVersandInterface em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
-    Presenter.finalizeRegistrierung();
+    Presenter.linkActivation();
     
     while (true) {
         try {
             int tokenChoice = Integer.parseInt(scanner.nextLine());
             if (tokenChoice == 1) {
-                db.updateStatus(k.getId());
+                db.updateStatus(k.getId(), true);
                 k = db.findeKundeNachEmail(k.getEmail());
                 em.welcomeEmail(k.getEmail());
                 return k;

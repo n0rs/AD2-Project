@@ -150,6 +150,29 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return -1; // -1 bedeutet, dass kein Nutzer gefunden wurde
     }
 
+    public Kunde findeKundeNachID(int user_id) throws RemoteException {
+        String selectQuery = "SELECT * FROM nutzer WHERE id = ?";
+        try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
+            selectStmt.setInt(1, user_id);
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String mail = rs.getString("email");
+                    String password = rs.getString("password");
+                    boolean activated = rs.getBoolean("is_active");
+                    return new Kunde(id, mail, password, activated);
+                }
+            }
+        } catch (Exception e) {
+            if(e instanceof NullPointerException) {
+                return null;
+            } else {
+            Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
+            }
+        }
+        return null; // Kein Kunde gefunden
+    }
+
     // E-Mail-Verifizierungseintrag erstellen
     public void emailVerificationEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO email_verification (user_id, token, expires_at) VALUES (?, ?, ?)";
@@ -224,7 +247,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             }
         } catch (Exception e) {
             if(e instanceof NullPointerException) {
-                Presenter.printMessage("Benutzername noch nicht vergeben.");
+                return null;
             } else {
             Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
             }
@@ -285,24 +308,29 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return null;
     }
 
-    public void updateStatus(int user_id) throws RemoteException {
-        String updateQuery ="UPDATE nutzer SET is_active=true WHERE id= ?";
+    public void updateStatus(int user_id, boolean isActive) throws RemoteException, NullPointerException {
+        String updateQuery ="UPDATE nutzer SET is_active=? WHERE id= ?";
 
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
-            updateStmt.setInt(1, user_id);
+            updateStmt.setBoolean(1, isActive);
+            updateStmt.setInt(2, user_id);
             updateStmt.executeUpdate();
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Aktivierungslink");
+        } catch (NullPointerException e) {
+           
         }
     }
 
+    @Override
     public void updatePassword(int user_id, String newPassword) throws RemoteException {
-         String updateQuery ="UPDATE nutzer SET passwort = ? WHERE id= ?";
+         String updateQuery ="UPDATE nutzer SET password = ? WHERE id= ?";
 
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
-            updateStmt.setInt(2, user_id);
             updateStmt.setString(1, newPassword);
+             updateStmt.setInt(2, user_id);
             updateStmt.executeUpdate();
+            Presenter.printMessage("Passwort erfolgreich aktualisiert.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Passwort aktualisieren.");
         }

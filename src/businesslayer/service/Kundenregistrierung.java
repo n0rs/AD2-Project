@@ -1,12 +1,11 @@
 package businesslayer.service;
 
+import businesslayer.objekte.Kunde;
+import dataaccesslayer.DatenbankManagerInterface;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
-
-import businesslayer.objekte.Kunde;
-import dataaccesslayer.DatenbankManagerInterface;
 
 public class Kundenregistrierung {
     public static Kunde registriereKunde() throws MalformedURLException, RemoteException, NotBoundException {
@@ -18,7 +17,7 @@ public class Kundenregistrierung {
             db.verbindungAufbauen();
             db.kundeAnlegen(email, passwort);
             Kunde kunde = db.findeKundeNachEmail(email);
-            db.emailVerificationEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
+            db.emailVerificationEintragErstellen(kunde.getId(), String.valueOf(TokenErstellung.erstelleToken()));
             db.passwortResetEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
             return kunde;
         }
