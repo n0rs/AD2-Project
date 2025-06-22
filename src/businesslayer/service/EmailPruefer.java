@@ -43,6 +43,7 @@ public class EmailPruefer implements Pruefer {
         return true;
     }
 
+
     // Führt eine Schleife durch, in der der Benutzer E-Mail-Adressen eingeben kann
     public static String starteEmailPruefung(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
         String email;

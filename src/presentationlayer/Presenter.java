@@ -10,18 +10,26 @@ public class Presenter {
         System.err.println(error);
     }
 
-    public static String hauptmenuString() {
-        return "Willkommen im Hauptmenü!\n" +
+    public static void hauptmenuString() {
+        System.out.println("\nHauptmenü:\n" +
                "1. Passwort zurücksetzen\n" +
-               "2. Registrierung abschließen\n";
+               "2. Neuer User\n");
     }
 
-    public static String introString() {
-        return "Willkommen bei der Kunderegistrierung!\n" +
-               "Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich zu registrieren.\n";
+    public static void introString() {
+        System.out.println( "Bitte wähen: \n1. Registrieren\n2.Passwort vergessen");
     }
 
-    public static void finalizeRegistrierung() {
+    public static void signUpString() {
+        System.out.println("Willkommen bei der Kunderegistrierung!\n" +
+               "Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich zu registrieren.\n");
+    }
+
+    public static void resetPassword() {
+        System.out.println("Neues Passwort: ");
+    }
+
+    public static void linkActivation() {
          System.out.println("1. Token anklicken\n2.60 Minuten warten");
     }
 
