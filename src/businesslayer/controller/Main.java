@@ -41,11 +41,6 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
             PasswortVerwaltung.newPassword(kunde);
             kunde = db.findeKundeNachEmail(kunde.getEmail());
             System.out.println(kunde.toString());
-            if (endDialog(scanner)) {
-                db.verbindungTrennen();
-                scanner.close(); // nur EINMAL am Ende schließen
-                System.exit(0);
-        }
     }
     if(op == 3) {
         Presenter.printMessage("Programm wird beendet.");
