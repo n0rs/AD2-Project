@@ -227,7 +227,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                     String mail = rs.getString("email");
                     String password = rs.getString("password");
                     boolean activated = rs.getBoolean("is_active");
-                    System.out.println("Kunde gefunden: " + id + ", " + mail + ", " + password + ", " + activated);
                     return new Kunde(id, mail, password, activated);
                 }
             }
