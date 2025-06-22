@@ -43,8 +43,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import presentationlayer.Presenter;
 
@@ -171,21 +169,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    // Gibt eine Liste aller User-IDs mit abgelaufenem E-Mail-Token zurück
-    public List<Integer> abgelaufeneEmailTokenFinden() throws RemoteException {
-    List<Integer> userIds = new ArrayList<>();
-    String selectQuery = "SELECT user_id FROM email_verification WHERE expires_at < NOW()";
-    try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
-        ResultSet rs = selectStmt.executeQuery()) {
-        while (rs.next()) {
-            userIds.add(rs.getInt("user_id"));
-        }
-    } catch (SQLException e) {
-        Presenter.printError("Fehler beim Finden abgelaufener E-Mail-Token: " + e.getMessage());
-    }
-    return userIds;
-    }
-
     // Passwort-Reset-Eintrag erstellen
     public void passwortResetEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO password_reset (user_id, token, expires_at) VALUES (?, ?, ?)";
@@ -198,21 +181,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Erstellen des Passwort-Reset-Eintrags: " + e.getMessage());
         }
-    }
-
-    // Abgelaufene Passwort-Reset-Token finden
-    public List<Integer> abgelaufenePasswortTokenfinden() throws RemoteException {
-        List<Integer> userIds = new ArrayList<>();
-        String selectQuery = "SELECT user_id FROM password_reset WHERE expires_at < NOW()";
-        try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
-            ResultSet rs = selectStmt.executeQuery()) {
-            if (rs.next()) {
-                userIds.add(rs.getInt("user_id"));
-            }
-        } catch (SQLException e) {
-            Presenter.printError("Fehler beim Finden abgelaufener Passwort-Reset-Token: " + e.getMessage());
-        }
-        return userIds; 
     }
 
     // Suche nach E-Mail
