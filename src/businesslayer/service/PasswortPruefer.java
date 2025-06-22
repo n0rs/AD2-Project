@@ -1,7 +1,6 @@
 // Implementiert Pruefer
 package businesslayer.service;
 
-import dataaccesslayer.DatenbankManagerInterface;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -22,7 +21,7 @@ public class PasswortPruefer implements Pruefer {
         return hasLetter && hasDigit && hasSpecial;
     }
 
-    @Override
+    /*@Override
     public boolean checkUniqueness(String password, String email) throws RemoteException, MalformedURLException, NotBoundException {
         
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
@@ -37,7 +36,7 @@ public class PasswortPruefer implements Pruefer {
             Presenter.printError("Fehler bei Passwortpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
         }
         return true;
-}
+    }*/
 
 
     public static String startePasswortPruefung(Scanner scanner) throws RemoteException, NotBoundException, MalformedURLException{

@@ -16,50 +16,47 @@ public class Main {
 public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException, AlreadyBoundException {
     Scanner scanner = new Scanner(System.in); // einmaliger Scanner
 
+    Kunde kunde;
     StartRegistry.startsRegistry(args);
     DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
     EmailVersandInterface em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
+    db.verbindungAufbauen();
 
     while (true) {
         Presenter.introString();
         int op = chooseIntroOption(scanner);
         if(op == 1) {
-        Kunde kunde = startRegistration(scanner);
-        em.sendeRegistrierungsEmail(db.findeEmailTokenMitEmail(kunde.getEmail()), kunde.getEmail());
-        kunde = tokenDialog(scanner, kunde);
-        if (endDialog(scanner)) {
-            db.verbindungTrennen();
-            scanner.close(); // nur EINMAL am Ende schließen
-            System.exit(0);
+            kunde = Kundenregistrierung.registriereKunde(scanner);
+            em.sendeRegistrierungsEmail(db.findeEmailTokenMitEmail(kunde.getEmail()), kunde.getEmail());
+            kunde = tokenDialog(scanner, kunde);
+            if (endDialog(scanner)) {
+                db.verbindungTrennen();
+                System.exit(0);
+            }
         }
-    }
-    if(op == 2) {
-            Kunde kunde = passwordReset(scanner);
+        if(op == 2) {
+            kunde = PasswortVerwaltung.prepareReset();
+            db.passwortResetEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
             db.updateStatus(kunde.getId(), false);
             em.passwortVergessen(db.findePasswortTokenMitEmail(kunde.getEmail()), kunde.getEmail());
             kunde = tokenDialog(scanner, kunde);
             PasswortVerwaltung.newPassword(kunde);
             kunde = db.findeKundeNachEmail(kunde.getEmail());
             System.out.println(kunde.toString());
+        }
+        if(op == 3) {
+            Presenter.printMessage("Programm wird beendet.");
+            db.verbindungTrennen();
+            System.exit(0);
+        }
     }
-    if(op == 3) {
-        Presenter.printMessage("Programm wird beendet.");
-        db.verbindungTrennen();
-        scanner.close(); // nur EINMAL am Ende schließen
-        System.exit(0);
-    }
-}
 }
 
 
-public static Kunde passwordReset(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
-   return PasswortVerwaltung.prepareReset();
-}
-    
 
 public static int chooseIntroOption(Scanner scanner) {
     while (true) {
-   try {
+    try {
     int opt = Integer.parseInt(scanner.nextLine());
     if(opt < 1 | opt > 2) {
         continue;
@@ -72,10 +69,7 @@ public static int chooseIntroOption(Scanner scanner) {
 }
 }
 
-public static Kunde startRegistration(Scanner scanner) throws RemoteException, MalformedURLException, NotBoundException {
-    Presenter.signUpString();
-    return Kundenregistrierung.registriereKunde(); // ggf. scanner mit übergeben
-}
+
 
 public static boolean endDialog(Scanner scanner) {
     Presenter.hauptmenuString();

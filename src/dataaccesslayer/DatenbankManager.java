@@ -107,6 +107,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
     }
 
     // Kunde anlegen
+    @Override
     public void kundeAnlegen(String email, String password) throws RemoteException {
         // ? ist ein Platzhalter für einen Parameter in der SQL-Abfrage
         // PreparedStatement ist eine Schnittstelle, die SQL-Abfragen mit Platzhaltern unterstützt
@@ -134,22 +135,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
     
-    // Kunden ID anhand der E-Mail finden
-    public int findeKundenId(String email) throws RemoteException {
-        String selectQuery = "SELECT id FROM nutzer WHERE email = ?";
-        try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
-            selectStmt.setString(1, email);
-            try (ResultSet rs = selectStmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (SQLException e) {
-            Presenter.printError("Fehler beim Finden der Kunden-ID: " + e.getMessage());
-        }
-        return -1; // -1 bedeutet, dass kein Nutzer gefunden wurde
-    }
-
     public Kunde findeKundeNachID(int user_id) throws RemoteException {
         String selectQuery = "SELECT * FROM nutzer WHERE id = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
@@ -242,29 +227,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
                     String mail = rs.getString("email");
                     String password = rs.getString("password");
                     boolean activated = rs.getBoolean("is_active");
-                    return new Kunde(id, mail, password, activated);
-                }
-            }
-        } catch (Exception e) {
-            if(e instanceof NullPointerException) {
-                return null;
-            } else {
-            Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
-            }
-        }
-        return null; // Kein Kunde gefunden
-    }
-
-    public Kunde findeKundeNachPasswort(String searchword) throws RemoteException, NullPointerException {
-        String selectQuery = "SELECT * FROM nutzer WHERE password = ?";
-        try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
-            selectStmt.setString(1, searchword);
-            try (ResultSet rs = selectStmt.executeQuery()) {
-                if (rs.next()) {
-                    int id = rs.getInt("id");
-                    String mail = rs.getString("email");
-                    String password = rs.getString("password");
-                    boolean activated = rs.getBoolean("is_active");
+                    System.out.println("Kunde gefunden: " + id + ", " + mail + ", " + password + ", " + activated);
                     return new Kunde(id, mail, password, activated);
                 }
             }
@@ -273,7 +236,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
         return null; // Kein Kunde gefunden
     }
-
 
 
     // Finde EmailToken über email

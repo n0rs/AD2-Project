@@ -8,9 +8,8 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class Kundenregistrierung {
-    public static Kunde registriereKunde() throws MalformedURLException, RemoteException, NotBoundException {
+    public static Kunde registriereKunde(Scanner scanner) throws MalformedURLException, RemoteException, NotBoundException {
         DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
-        Scanner scanner = new Scanner(System.in);
         while(true) {
             String email = EmailPruefer.starteEmailPruefung(scanner);
             String passwort = PasswortPruefer.startePasswortPruefung(scanner);
@@ -18,7 +17,6 @@ public class Kundenregistrierung {
             db.kundeAnlegen(email, passwort);
             Kunde kunde = db.findeKundeNachEmail(email);
             db.emailVerificationEintragErstellen(kunde.getId(), String.valueOf(TokenErstellung.erstelleToken()));
-            db.passwortResetEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
             return kunde;
         }
     }
