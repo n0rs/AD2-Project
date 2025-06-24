@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+
 import java.util.Scanner;
 import presentationlayer.Presenter;
 
@@ -16,10 +17,20 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
     Scanner scanner = new Scanner(System.in); // einmaliger Scanner
     Kunde kunde = null;
     StartRegistry.startsRegistry(args);
-    DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
-    EmailVersandInterface em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
+    DatenbankManagerInterface db = null;
+    EmailVersandInterface em = null;
+    try {
+        db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
+        em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
+    } catch (NotBoundException | MalformedURLException | RemoteException e) {
+        Presenter.printError("Verbindung zum Server fehlgeschlagen.");
+        return;
+    } 
     db.verbindungAufbauen();
+    startDialog(db, em, scanner, kunde);
+}
 
+public static void startDialog(DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
     while (true) {
         Presenter.introString();
         int op = Integer.parseInt(scanner.nextLine());
@@ -60,11 +71,11 @@ public static void hauptMenuDialog(DatenbankManagerInterface db, EmailVersandInt
                 if (kunde == null) {
                     kunde = db.findeKundeNachEmail(email);
                     Presenter.printError("Passwort-Reset fehlgeschlagen. Bitte versuchen Sie es erneut.");
-                    return; // Gehe zurück zum Anfang, um eine neue Eingabe zu ermöglichen
+                return; // Gehe zurück zum Anfang, um eine neue Eingabe zu ermöglichen
                 } else {
-                    Presenter.printMessage("Passwort erfolgreich zurückgesetzt.");
-                    return;
-            }
+                    Presenter.printMessage("Passwort erfolgreich zurückgesetzt.");  
+                }
+                return;
             }
             if (continueChoice == 3) {
                 Presenter.printMessage("Programm wird beendet.");

@@ -10,14 +10,21 @@ import presentationlayer.Presenter;
 
 public class StartRegistry {
     public static void startsRegistry(String[] args) throws RemoteException, AlreadyBoundException {
-        Registry reg;
-        int p = 1099;
-        reg = java.rmi.registry.LocateRegistry.createRegistry(p);
-        Presenter.printMessage("RMI-Registry gestartet auf Port " + p);
-        DatenbankManager datenbankManager = new DatenbankManager();
-        EmailVersand emailVersand = new EmailVersand();
-        reg.bind("DatenbankManager", datenbankManager);
-        reg.bind("EmailVersand", emailVersand);
-    }
-}
+        final int PORT = 1099;
+        try {
+            Registry reg = java.rmi.registry.LocateRegistry.createRegistry(PORT);
+            Presenter.printMessage("RMI-Registry gestartet auf Port " + PORT);
 
+            DatenbankManager datenbankManager = new DatenbankManager();
+            EmailVersand emailVersand = new EmailVersand();
+
+            reg.bind("DatenbankManager", datenbankManager);
+            reg.bind("EmailVersand", emailVersand);
+        } catch (RemoteException e) {
+            Presenter.printError("Fehler beim Starten der RMI-Registry: " + e.getMessage());
+            e.printStackTrace();
+        } catch (AlreadyBoundException e) {
+            Presenter.printError("Ein Service ist bereits registriert: " + e.getMessage());
+        }
+}
+}

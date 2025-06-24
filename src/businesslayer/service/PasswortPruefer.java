@@ -8,9 +8,8 @@ import java.util.Scanner;
 import presentationlayer.Presenter;
 
 public class PasswortPruefer implements Pruefer {
-    
-    @Override
-    public boolean pruefe(String password) throws RemoteException, MalformedURLException, NotBoundException{
+
+    public static boolean pruefe(String password) {
         if (password.length() < 8) return false;
         // Nutzt regular expressions um zu prüfen ob das Passwort mindestens einen Buchstaben, eine Zahl und ein Sonderzeichen enthält
         // .* bedeutet beliebig viele Zeichen, [a-zA-Z] bedeutet ein Buchstabe, \\d bedeutet eine Zahl und [!@#$%^&*(),.?":{}|<>] bedeutet ein Sonderzeichen
@@ -44,9 +43,7 @@ public class PasswortPruefer implements Pruefer {
         while(true) {
             Presenter.printMessage("Passwort: ");
             passwort = scanner.nextLine();
-
-            PasswortPruefer pruefer = new PasswortPruefer();
-            if (pruefer.pruefe(passwort)) {
+            if (pruefe(passwort)) {
                 Presenter.printMessage("Starkes Passwort");
                 break;
             } else {

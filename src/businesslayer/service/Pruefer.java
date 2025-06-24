@@ -6,5 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public interface Pruefer {
-    boolean pruefe(String wert) throws RemoteException, MalformedURLException, NotBoundException;
+    static boolean pruefe(String wert) throws RemoteException, MalformedURLException, NotBoundException {
+        return false; // Default implementation, can be overridden
+    }
 }

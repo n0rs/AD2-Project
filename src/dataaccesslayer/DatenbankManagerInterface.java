@@ -17,4 +17,6 @@ public interface DatenbankManagerInterface extends java.rmi.Remote {
     public abstract void updateStatus(int user_id, boolean isActive) throws RemoteException;
     public abstract void updatePassword(int user_id, String newPassword) throws RemoteException;
     public abstract Kunde findeKundeNachID(int user_id) throws RemoteException;
+    public abstract void loescheEmailToken(int kundenId) throws RemoteException;
+    public abstract void loeschePasswortToken(int kundenId) throws RemoteException;
 }

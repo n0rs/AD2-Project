@@ -1,6 +1,5 @@
 package businesslayer.service;
 
-
 import businesslayer.objekte.*;
 import dataaccesslayer.DatenbankManagerInterface;
 import java.net.MalformedURLException;
@@ -12,15 +11,14 @@ import presentationlayer.Presenter;
 public class PasswortVerwaltung {
     public static Kunde newPassword(DatenbankManagerInterface db, Scanner scanner, Kunde kunde) throws RemoteException, MalformedURLException, NotBoundException {
         int kundenId = kunde.getId();
-        while (true) {
-            Presenter.printMessage("Passwort zurücksetzen für Kunde mit ID: " + kundenId);
-            String newPW = PasswortPruefer.startePasswortPruefung(scanner);
-            db.updatePassword(kundenId, newPW);
-            return db.findeKundeNachID(kundenId);
-        }
+        Presenter.printMessage("Passwort zurücksetzen für Kunde mit ID: " + kundenId);
+        String newPW = PasswortPruefer.startePasswortPruefung(scanner);
+        db.updatePassword(kundenId, newPW);
+        return db.findeKundeNachID(kundenId);
     }
 
     public static Kunde passwortReset (DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
+        String token = TokenErstellung.erstelleToken();
         String email;
         if (kunde == null) {
             while (true) {
@@ -33,8 +31,8 @@ public class PasswortVerwaltung {
                     return null;
                     // Wenn die E-Mail nicht existiert, gehe zurück zum Anfang
                 }
-                db.passwortResetEintragErstellen(kunde.getId(), TokenErstellung.erstelleToken());
-                em.passwortVergessen(db.findePasswortTokenMitEmail(kunde.getEmail()), kunde.getEmail());
+                db.passwortResetEintragErstellen(kunde.getId(), token);
+                em.passwortVergessen(token, kunde.getEmail());
                 kunde = passwortTokenDialog(db, scanner, kunde);
                 if (kunde == null) {
                     Presenter.printError("Token abgelaufen oder ungültig. Bitte versuchen Sie es erneut.");
@@ -64,15 +62,16 @@ public class PasswortVerwaltung {
 
     public static Kunde passwortTokenDialog(DatenbankManagerInterface db, Scanner scanner, Kunde k) throws RemoteException, NotBoundException, MalformedURLException {
     Presenter.linkActivation();
-    
     while (true) {
         try {
             int tokenChoice = Integer.parseInt(scanner.nextLine());
             if (tokenChoice == 1) {
                 k = db.findeKundeNachEmail(k.getEmail());
+                db.loeschePasswortToken(k.getId());
                 return k;
             } else if (tokenChoice == 2) {
                 Presenter.passwortTokenAbgelaufen();
+                db.loeschePasswortToken(k.getId());
                 return null;
             }
         } catch (NumberFormatException e) {

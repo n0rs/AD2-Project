@@ -119,7 +119,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    /// Löscht alle Nutzer mit einer Liste von IDs
     @Override
     public void kundenLoeschenId(int user_id) throws RemoteException {
     String query = "DELETE FROM nutzer WHERE id = ?";
@@ -260,6 +259,30 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             updateStmt.executeUpdate();
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Passwort aktualisieren.");
+        }
+    }
+
+    @Override
+    public void loescheEmailToken(int user_id) throws RemoteException {
+        String deleteQuery = "DELETE FROM email_verification WHERE user_id = ?";
+        try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+            deleteStmt.setInt(1, user_id);
+            deleteStmt.executeUpdate();
+            Presenter.printMessage("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde gelöscht.");
+        } catch (SQLException e) {
+            Presenter.printError("Fehler beim Löschen des E-Mail-Verifizierungseintrags: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void loeschePasswortToken(int user_id) throws RemoteException {
+        String deleteQuery = "DELETE FROM password_reset WHERE user_id = ?";
+        try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+            deleteStmt.setInt(1, user_id);
+            deleteStmt.executeUpdate();
+            Presenter.printMessage("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde gelöscht.");
+        } catch (SQLException e) {
+            Presenter.printError("Fehler beim Löschen des Passwort-Reset-Eintrags: " + e.getMessage());
         }
     }
 }
