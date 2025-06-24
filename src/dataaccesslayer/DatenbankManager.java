@@ -162,7 +162,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             insertStmt.setString(2, token);
             insertStmt.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 1 Stunde gültig
             insertStmt.executeUpdate();
-            Presenter.printMessage("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Erstellen des E-Mail-Verifizierungseintrags: " + e.getMessage());
         }
@@ -176,7 +175,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             insertStatement.setString(2, token);
             insertStatement.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 3600000)); // 3600000 = 1 Stunde gültig
             insertStatement.executeUpdate();
-            Presenter.printMessage("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde erstellt.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Erstellen des Passwort-Reset-Eintrags: " + e.getMessage());
         }
@@ -268,7 +266,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
             deleteStmt.setInt(1, user_id);
             deleteStmt.executeUpdate();
-            Presenter.printMessage("E-Mail-Verifizierungseintrag für User-ID " + user_id + " wurde gelöscht.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Löschen des E-Mail-Verifizierungseintrags: " + e.getMessage());
         }
@@ -280,7 +277,6 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         try (PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
             deleteStmt.setInt(1, user_id);
             deleteStmt.executeUpdate();
-            Presenter.printMessage("Passwort-Reset-Eintrag für User-ID " + user_id + " wurde gelöscht.");
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Löschen des Passwort-Reset-Eintrags: " + e.getMessage());
         }
