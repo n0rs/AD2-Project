@@ -2,7 +2,6 @@
 Erstellt bei pgadmin4 eine neue Datenbank mit dem Namen AD2-Projekt
 (Rechtsklick auf den Server -> Create -> Database...)
 unter Rechtsklick Properties auf den Server seht sollte wie im Bild die Infos stehen
-bzw. der Username und das Passwort legt ihr in der config.properties an
 führt die folgenden SQL-Befehle aus, um die Tabellen zu erstellen
 CREATE TABLE nutzer (
     id SERIAL PRIMARY KEY,
