@@ -1,4 +1,4 @@
-// Implementiert Pruefer
+// Prüft Passwörter auf Sicherheit
 package businesslayer.service;
 
 import java.net.MalformedURLException;
@@ -9,35 +9,17 @@ import presentationlayer.Presenter;
 
 public class PasswortPruefer implements Pruefer {
 
+    // Prüft, ob das Passwort sicher genug ist
     public static boolean pruefe(String password) {
-        if (password.length() < 8) return false;
-        // Nutzt regular expressions um zu prüfen ob das Passwort mindestens einen Buchstaben, eine Zahl und ein Sonderzeichen enthält
-        // .* bedeutet beliebig viele Zeichen, [a-zA-Z] bedeutet ein Buchstabe, \\d bedeutet eine Zahl und [!@#$%^&*(),.?":{}|<>] bedeutet ein Sonderzeichen
-        // + bedeutet mindestens einmal
+        if (password.length() < 8) return false; // Mindestens 8 Zeichen
+        // Prüft, ob das Passwort Buchstaben, Zahlen und Sonderzeichen enthält
         boolean hasLetter = password.matches(".*[a-zA-Z]+.*");
         boolean hasDigit = password.matches(".*\\d+.*");
         boolean hasSpecial = password.matches(".*[!@#$%^&*(),.?\":{}|<>]+.*");
         return hasLetter && hasDigit && hasSpecial;
     }
 
-    /*@Override
-    public boolean checkUniqueness(String password, String email) throws RemoteException, MalformedURLException, NotBoundException {
-        
-        DatenbankManagerInterface db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
-        try {
-             if(db.findeKundeNachPasswort(password) != null) {
-                String compareMail = db.findeKundeNachPasswort(password).getEmail();
-                if(compareMail.equals(email)) {
-                return false; 
-          }
-        }
-         } catch (RemoteException e) {
-            Presenter.printError("Fehler bei Passwortpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
-        }
-        return true;
-    }*/
-
-
+    // Fragt den Nutzer so lange nach einem Passwort, bis ein sicheres Passwort eingegeben wurde
     public static String startePasswortPruefung(Scanner scanner) throws RemoteException, NotBoundException, MalformedURLException{
         String passwort;
         while(true) {

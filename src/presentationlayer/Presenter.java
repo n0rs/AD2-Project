@@ -18,7 +18,8 @@ public class Presenter {
     }
 
     public static void introString() {
-        System.out.println( "Bitte wählen: \n1.Registrieren\n2.Passwort vergessen");
+        System.out.println( "Bitte wählen: \n1.Registrieren\n2.Passwort vergessen\n3.Beenden\n"
+               );
     }
 
     public static void signUpString() {

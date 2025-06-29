@@ -14,70 +14,90 @@ import presentationlayer.Presenter;
 
 public class Main {
 public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException, AlreadyBoundException {
+    // Scanner für die Benutzereingabe
     Scanner scanner = new Scanner(System.in); // einmaliger Scanner
     Kunde kunde = null;
+    // Startet die RMI-Registry
     StartRegistry.startsRegistry(args);
     DatenbankManagerInterface db = null;
     EmailVersandInterface em = null;
     try {
+        // Verbindet sich mit den entfernten Objekten (Server)
         db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
     } catch (NotBoundException | MalformedURLException | RemoteException e) {
         Presenter.printError("Verbindung zum Server fehlgeschlagen.");
         return;
     } 
+    // Baut die Verbindung zur Datenbank auf
     db.verbindungAufbauen();
+    // Startet den Dialog mit dem Benutzer
     startDialog(db, em, scanner, kunde);
 }
 
+// Hauptdialog für die Benutzerinteraktion
 public static void startDialog(DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
     while (true) {
-        Presenter.introString();
+        Presenter.introString(); // Begrüßung und Menü anzeigen
         int op = Integer.parseInt(scanner.nextLine());
         if (op == 1) {
+            // Registrierung eines neuen Kunden
             kunde = Kundenregistrierung.registriereKunde(db, em, scanner);
+            // E-Mail-Bestätigung und Aktivierung
             kunde = Kundenregistrierung.emailTokenDialog(db, em, scanner, kunde);
-            hauptMenuDialog(db, em, scanner, kunde);
+            // Nach erfolgreicher Registrierung ins Hauptmenü
+            kunde = hauptMenuDialog(db, em, scanner, kunde);
             continue;
         }
         if (op == 2) {
+            // Passwort zurücksetzen
             kunde = PasswortVerwaltung.passwortReset(db, em, scanner, kunde);
             if (kunde == null) {
                 Presenter.printError("Passwort-Reset fehlgeschlagen. Bitte versuchen Sie es erneut.");
-                continue; // Gehe zurück zum Anfang, um eine neue Eingabe zu ermöglichen
+                continue; 
             } else {
                 Presenter.printMessage("Passwort erfolgreich zurückgesetzt.");
                 continue;
             }
+        }
+        if (op == 3) {
+            // Programm beenden
+            Presenter.printMessage("Programm wird beendet.");
+            System.exit(0);
         } else {
-            Presenter.printError("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+            Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
             continue;
         }
     }
 }
 
-public static void hauptMenuDialog(DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
-    Presenter.hauptmenuString();
+// Menü nach erfolgreicher Anmeldung/Registrierung
+public static Kunde hauptMenuDialog(DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
+    Presenter.hauptmenuString(); // Hauptmenü anzeigen
     while (true) {
         try {
             String email = kunde.getEmail();
             int continueChoice = Integer.parseInt(scanner.nextLine());
             if (continueChoice == 1) {
+                // Ausloggen, Kunde wird wieder auf null gesetzt
                 Presenter.printMessage("Sie wurden ausgeloggt. \nNeustart:\n");
-                return;
+                return null;
             }
             if (continueChoice == 2) {
+                // Passwort zurücksetzen
                 kunde = PasswortVerwaltung.passwortReset(db, em, scanner, kunde);
                 if (kunde == null) {
+                    // Falls das Zurücksetzen fehlschlägt, bleibt der Kunde angemeldet
                     kunde = db.findeKundeNachEmail(email);
                     Presenter.printError("Passwort-Reset fehlgeschlagen. Bitte versuchen Sie es erneut.");
-                return; // Gehe zurück zum Anfang, um eine neue Eingabe zu ermöglichen
+                return kunde; 
                 } else {
                     Presenter.printMessage("Passwort erfolgreich zurückgesetzt.");  
                 }
-                return;
+                return kunde;
             }
             if (continueChoice == 3) {
+                // Programm beenden
                 Presenter.printMessage("Programm wird beendet.");
                 System.exit(0);
             } else {
@@ -85,9 +105,9 @@ public static void hauptMenuDialog(DatenbankManagerInterface db, EmailVersandInt
                 continue;
             }
         } catch (NumberFormatException e) {
+            // Fehler bei der Eingabe (keine Zahl)
             Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
         }
     }
 }
-
 }

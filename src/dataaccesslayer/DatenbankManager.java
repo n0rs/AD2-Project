@@ -22,11 +22,6 @@ CREATE TABLE password_reset (
     expires_at TIMESTAMP NOT NULL,
     PRIMARY KEY (user_id)
 );
-config.properties
-db.url=jdbc:postgresql://localhost/AD2-Projekt
-db.user=hier kommt euer Username rein (z.B. postgres)
-db.password=hier kommt euer Passwort rein
-(alles ohne "" und leerzeichen)
 */
 
 
@@ -34,8 +29,6 @@ package dataaccesslayer;
 
 // Java-Importe
 import businesslayer.objekte.Kunde;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
@@ -43,44 +36,24 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
-import presentationlayer.Presenter;
 
+import presentationlayer.Presenter;
 
 public class DatenbankManager extends UnicastRemoteObject implements DatenbankManagerInterface {
     public DatenbankManager() throws RemoteException {
         super();
     }
 
-    private static String URL;
-    private static String BENUTZERNAME;
-    private static String PASSWORT;
+    private static String URL = "jdbc:postgresql://localhost/AD2-Projekt";
+    private static String BENUTZERNAME = "postgres";
+    private static String PASSWORT = "Davidvilla12*";
 
-    // Connection ist eine Klasse, die eine Verbindung zu einer Datenbank darstellt
+    // Verbindung zur Datenbank
     private static Connection connection;
 
-    // Liest Datenbankkonfiguration aus Datei config.properties
-    // Dadurch müssen wir passwort und Benutzername nicht im Code speichern
-    // Die Datei config.properties gebe ich euch so, da es unsinnig wäre, sie auf GitHub zu speichern :)
-    static {
-        try (FileInputStream file = new FileInputStream("config.properties")) {
-            Properties properties = new Properties();
-            properties.load(file);
-
-            URL = properties.getProperty("db.url");
-            BENUTZERNAME = properties.getProperty("db.user");
-            PASSWORT = properties.getProperty("db.password");
-        } catch (IOException e) {
-            Presenter.printError("Fehler beim Laden der Konfigurationsdatei: " + e.getMessage());
-            }
-        }
-
-    // Verbindung aufbauen
+    // Baut die Verbindung zur Datenbank auf
     public void verbindungAufbauen() throws RemoteException {
         try {
-            // DriverManager ist eine Klasse, die für die Verwaltung von JDBC-Treibern verantwortlich ist
-            // JDBC ist eine API, die es Java-Anwendungen ermöglicht, auf verschiedene Datenbanken zuzugreifen
-            // In unserem Fall ist der Treiber in der lib/postgresql-42.7.5.jar Datei enthalten
             connection = DriverManager.getConnection(URL, BENUTZERNAME, PASSWORT);
             Presenter.printMessage("Verbindung erfolgreich!");
         } catch (SQLException e) {
@@ -88,11 +61,10 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    // Verbindung trennen
+    // Trennt die Verbindung zur Datenbank
     public void verbindungTrennen() throws RemoteException {
         if (connection != null) {
             try {
-                // close() ist eine Methode der Connection Klasse
                 connection.close();
                 Presenter.printMessage("Verbindung getrennt!");
             } catch (SQLException e) {
@@ -103,11 +75,9 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    // Kunde anlegen
+    // Legt einen neuen Kunden in der Datenbank an
     @Override
     public void kundeAnlegen(String email, String password) throws RemoteException {
-        // ? ist ein Platzhalter für einen Parameter in der SQL-Abfrage
-        // PreparedStatement ist eine Schnittstelle, die SQL-Abfragen mit Platzhaltern unterstützt
         String query = "INSERT INTO nutzer (email, password) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
@@ -119,18 +89,19 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
+    // Löscht einen Kunden anhand der ID
     @Override
     public void kundenLoeschenId(int user_id) throws RemoteException {
-    String query = "DELETE FROM nutzer WHERE id = ?";
-    try (PreparedStatement deleteStmt = connection.prepareStatement(query)) {
-        deleteStmt.setInt(1, user_id);
-        deleteStmt.executeUpdate();
-        Presenter.printMessage("Nutzer mit ID " + user_id + " wurde gelöscht (Verifizierung abgelaufen).");
+        String query = "DELETE FROM nutzer WHERE id = ?";
+        try (PreparedStatement deleteStmt = connection.prepareStatement(query)) {
+            deleteStmt.setInt(1, user_id);
+            deleteStmt.executeUpdate();
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Löschen der Kunden: " + e.getMessage());
         }
     }
-    
+
+    // Sucht einen Kunden anhand der ID
     public Kunde findeKundeNachID(int user_id) throws RemoteException {
         String selectQuery = "SELECT * FROM nutzer WHERE id = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
@@ -148,13 +119,13 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
             if(e instanceof NullPointerException) {
                 return null;
             } else {
-            Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
+                Presenter.printError("Fehler beim Finden des Kunden: " + e.getMessage());
             }
         }
         return null; // Kein Kunde gefunden
     }
 
-    // E-Mail-Verifizierungseintrag erstellen
+    // Legt einen Eintrag für die E-Mail-Bestätigung an
     public void emailVerificationEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO email_verification (user_id, token, expires_at) VALUES (?, ?, ?)";
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
@@ -167,7 +138,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    // Passwort-Reset-Eintrag erstellen
+    // Legt einen Eintrag für das Zurücksetzen des Passworts an
     public void passwortResetEintragErstellen(int user_id, String token) throws RemoteException {
         String insertQuery = "INSERT INTO password_reset (user_id, token, expires_at) VALUES (?, ?, ?)";
         try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
@@ -180,7 +151,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
-    // Suche nach E-Mail
+    // Sucht einen Kunden anhand der E-Mail-Adresse
     public Kunde findeKundeNachEmail(String email) throws RemoteException, NullPointerException {
         String selectQuery = "SELECT * FROM nutzer WHERE email = ?";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
@@ -200,8 +171,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return null; // Kein Kunde gefunden
     }
 
-
-    // Finde EmailToken über email
+    // Sucht das E-Mail-Token anhand der E-Mail-Adresse
     public String findeEmailTokenMitEmail(String email) throws RemoteException {
         String selectQuery = "SELECT token FROM email_verification WHERE user_id = (SELECT id FROM nutzer WHERE email = ?)";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
@@ -217,7 +187,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return null;
     }
 
-    // Finde PasswortToken über email
+    // Sucht das Passwort-Token anhand der E-Mail-Adresse
     public String findePasswortTokenMitEmail(String email) throws RemoteException {
         String selectQuery = "SELECT token FROM password_reset WHERE user_id = (SELECT id FROM nutzer WHERE email = ?)";
         try (PreparedStatement selectStmt = connection.prepareStatement(selectQuery)) {
@@ -233,24 +203,22 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         return null;
     }
 
+    // Setzt den Status eines Kunden (z.B. aktiviert)
     public void updateStatus(int user_id, boolean isActive) throws RemoteException, NullPointerException {
         String updateQuery ="UPDATE nutzer SET is_active=? WHERE id= ?";
-
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
             updateStmt.setBoolean(1, isActive);
             updateStmt.setInt(2, user_id);
             updateStmt.executeUpdate();
         } catch (SQLException e) {
             Presenter.printError("Fehler beim Aktivierungslink");
-        } catch (NullPointerException e) {
-           
         }
     }
 
+    // Aktualisiert das Passwort eines Kunden
     @Override
     public void updatePassword(int user_id, String newPassword) throws RemoteException {
-         String updateQuery ="UPDATE nutzer SET password = ? WHERE id= ?";
-
+        String updateQuery ="UPDATE nutzer SET password = ? WHERE id= ?";
         try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
             updateStmt.setString(1, newPassword);
             updateStmt.setInt(2, user_id);
@@ -260,6 +228,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
+    // Löscht das E-Mail-Token eines Kunden
     @Override
     public void loescheEmailToken(int user_id) throws RemoteException {
         String deleteQuery = "DELETE FROM email_verification WHERE user_id = ?";
@@ -271,6 +240,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         }
     }
 
+    // Löscht das Passwort-Token eines Kunden
     @Override
     public void loeschePasswortToken(int user_id) throws RemoteException {
         String deleteQuery = "DELETE FROM password_reset WHERE user_id = ?";

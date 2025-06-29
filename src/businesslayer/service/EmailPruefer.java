@@ -1,4 +1,4 @@
-    // Implementiert Pruefer
+// Prüft E-Mail-Adressen und deren Einzigartigkeit
 package businesslayer.service;
 
 import dataaccesslayer.DatenbankManagerInterface;
@@ -7,6 +7,8 @@ import java.util.Scanner;
 import presentationlayer.Presenter;
 
 public class EmailPruefer implements Pruefer {
+
+    // Prüft, ob die E-Mail-Adresse die wichtigsten Regeln erfüllt
     public static boolean pruefe(String email) throws RemoteException  {
         if (!email.contains("@")) {
             Presenter.printError("E-Mail-Adresse muss ein '@' enthalten.");
@@ -24,21 +26,20 @@ public class EmailPruefer implements Pruefer {
         return true;
     }
 
-
+    // Prüft, ob die E-Mail-Adresse schon in der Datenbank existiert
     public static boolean checkUniqueness(DatenbankManagerInterface db, String email) throws RemoteException {
         try {
             if(db.findeKundeNachEmail(email) != null) {
                 return false;
             }
-          } catch (RemoteException e) {
+        } catch (RemoteException e) {
             Presenter.printError("Fehler bei Emailpruefung: Abgleichen mit Datenbank fehlgeschlagen.");
             return false;
         }
         return true;
     }
 
-
-    // Führt eine Schleife durch, in der der Benutzer E-Mail-Adressen eingeben kann
+    // Fragt den Nutzer so lange nach einer E-Mail, bis eine gültige und freie Adresse eingegeben wurde
     public static String starteEmailPruefung(DatenbankManagerInterface db, Scanner scanner) throws RemoteException {
         String email;
         while (true) {
