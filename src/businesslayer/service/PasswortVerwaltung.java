@@ -13,7 +13,6 @@ public class PasswortVerwaltung {
     // Setzt das Passwort eines Kunden neu
     public static Kunde newPassword(DatenbankManagerInterface db, Scanner scanner, Kunde kunde) throws RemoteException, MalformedURLException, NotBoundException {
         int kundenId = kunde.getId();
-        Presenter.printMessage("Passwort zurücksetzen für Kunde mit ID: " + kundenId);
         String newPW = PasswortPruefer.startePasswortPruefung(scanner); // Fragt neues Passwort ab
         db.updatePassword(kundenId, newPW); // Speichert das neue Passwort in der Datenbank
         return db.findeKundeNachID(kundenId); // Gibt den aktualisierten Kunden zurück
@@ -80,14 +79,19 @@ public class PasswortVerwaltung {
                     k = db.findeKundeNachEmail(k.getEmail());
                     db.loeschePasswortToken(k.getId());
                     return k;
-                } else if (tokenChoice == 2) {
+                } if (tokenChoice == 2) {
                     // Token abgelaufen oder abgebrochen
                     Presenter.passwortTokenAbgelaufen();
                     db.loeschePasswortToken(k.getId());
                     return null;
                 }
+                else {
+                    Presenter.printError("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+                    continue;
+                }
             } catch (NumberFormatException e) {
                 Presenter.printError("Ungültige Eingabe. Bitte 1 oder 2 eingeben.");
+                continue; 
             }
         }
     }

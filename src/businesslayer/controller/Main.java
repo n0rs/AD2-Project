@@ -39,32 +39,35 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
 public static void startDialog(DatenbankManagerInterface db, EmailVersandInterface em, Scanner scanner, Kunde kunde) throws MalformedURLException, RemoteException, NotBoundException {
     while (true) {
         Presenter.introString(); // Begrüßung und Menü anzeigen
-        int op = Integer.parseInt(scanner.nextLine());
-        if (op == 1) {
-            // Registrierung eines neuen Kunden
-            kunde = Kundenregistrierung.registriereKunde(db, em, scanner);
-            // E-Mail-Bestätigung und Aktivierung
-            kunde = Kundenregistrierung.emailTokenDialog(db, em, scanner, kunde);
-            // Nach erfolgreicher Registrierung ins Hauptmenü
-            kunde = hauptMenuDialog(db, em, scanner, kunde);
-            continue;
-        }
-        if (op == 2) {
-            // Passwort zurücksetzen
-            kunde = PasswortVerwaltung.passwortReset(db, em, scanner, kunde);
-            if (kunde == null) {
-                Presenter.printError("Passwort-Reset fehlgeschlagen. Bitte versuchen Sie es erneut.");
-                continue; 
-            } else {
-                Presenter.printMessage("Passwort erfolgreich zurückgesetzt.");
+        try {int op = Integer.parseInt(scanner.nextLine());
+            if (op == 1) {
+                // Registrierung eines neuen Kunden
+                kunde = Kundenregistrierung.registriereKunde(db, em, scanner);
+                // E-Mail-Bestätigung und Aktivierung
+                kunde = Kundenregistrierung.emailTokenDialog(db, em, scanner, kunde);
+                // Nach erfolgreicher Registrierung ins Hauptmenü
+                kunde = hauptMenuDialog(db, em, scanner, kunde);
                 continue;
             }
-        }
-        if (op == 3) {
-            // Programm beenden
-            Presenter.printMessage("Programm wird beendet.");
-            System.exit(0);
-        } else {
+            if (op == 2) {
+                // Passwort zurücksetzen
+                kunde = PasswortVerwaltung.passwortReset(db, em, scanner, kunde);
+                if (kunde == null) {
+                    Presenter.printError("Passwort-Reset fehlgeschlagen. Bitte versuchen Sie es erneut.");
+                    continue; 
+                } else {
+                    continue;
+                }
+            }
+            if (op == 3) {
+                // Programm beenden
+                Presenter.printMessage("Programm wird beendet.");
+                System.exit(0);
+            } else {
+                Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+                continue;
+            }
+        } catch (NumberFormatException e) {
             Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
             continue;
         }
@@ -107,6 +110,7 @@ public static Kunde hauptMenuDialog(DatenbankManagerInterface db, EmailVersandIn
         } catch (NumberFormatException e) {
             // Fehler bei der Eingabe (keine Zahl)
             Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+            continue;
         }
     }
 }

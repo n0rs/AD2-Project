@@ -45,7 +45,7 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
 
     private static String URL = "jdbc:postgresql://localhost/AD2-Projekt";
     private static String BENUTZERNAME = "postgres";
-    private static String PASSWORT = "";
+    private static String PASSWORT = "Davidvilla12*";
 
     // Verbindung zur Datenbank
     private static Connection connection;
