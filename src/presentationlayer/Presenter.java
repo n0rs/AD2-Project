@@ -10,6 +10,11 @@ public class Presenter {
         System.err.println(error);
     }
 
+    public static void printEmail(String empfaenger, String betreff, String text) {
+    String email = String.format("Empfänger: %s\nBetreff: %s\n%s", empfaenger, betreff, text);
+    printMessage(email);
+    }
+
     public static void hauptmenuString() {
         System.out.println("\nHauptmenü:\n" +
                "1. Ausloggen\n" +
