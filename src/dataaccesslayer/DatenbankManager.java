@@ -1,7 +1,4 @@
 /* 
-Erstellt bei pgadmin4 eine neue Datenbank mit dem Namen AD2-Projekt
-(Rechtsklick auf den Server -> Create -> Database...)
-führt die folgenden SQL-Befehle aus, um die Tabellen zu erstellen
 CREATE TABLE nutzer (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -42,6 +39,8 @@ public class DatenbankManager extends UnicastRemoteObject implements DatenbankMa
         super();
     }
 
+    // Datenbank-Verbindungsinformationen
+    // Bitte anpassen
     private static String URL = "jdbc:postgresql://localhost/AD2-Projekt";
     private static String BENUTZERNAME = "postgres";
     private static String PASSWORT = "";
