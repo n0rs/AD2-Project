@@ -23,6 +23,7 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
     Kunde kunde = null;
     // Startet die RMI-Registry
     StartRegistry.startsRegistry(args);
+    
     DatenbankManagerInterface db = null;
     EmailVersandInterface em = null;
     try {
