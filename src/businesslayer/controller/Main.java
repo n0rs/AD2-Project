@@ -13,7 +13,11 @@ import java.util.Scanner;
 import presentationlayer.Presenter;
 
 public class Main {
+private static final String ungueltigeEingabe = "Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.";
+private static final String programmBeenden = "Programm wird beendet.";
+
 public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException, AlreadyBoundException {
+
     // Scanner für die Benutzereingabe
     Scanner scanner = new Scanner(System.in); // einmaliger Scanner
     Kunde kunde = null;
@@ -26,8 +30,8 @@ public static void main(String[] args) throws RemoteException, MalformedURLExcep
         db = (DatenbankManagerInterface) java.rmi.Naming.lookup("rmi://localhost:1099/DatenbankManager");
         em = (EmailVersandInterface) java.rmi.Naming.lookup("rmi://localhost:1099/EmailVersand");
     } catch (NotBoundException | MalformedURLException | RemoteException e) {
-        Presenter.printError("Verbindung zum Server fehlgeschlagen.");
-        return;
+        Presenter.printError("Verbindung zum Server fehlgeschlagen." + programmBeenden);
+        System.exit(0);
     } 
     // Baut die Verbindung zur Datenbank auf
     db.verbindungAufbauen();
@@ -61,14 +65,14 @@ public static void startDialog(DatenbankManagerInterface db, EmailVersandInterfa
             }
             if (op == 3) {
                 // Programm beenden
-                Presenter.printMessage("Programm wird beendet.");
+                Presenter.printMessage(programmBeenden);
                 System.exit(0);
             } else {
-                Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+                Presenter.printError(ungueltigeEingabe);
                 continue;
             }
         } catch (NumberFormatException e) {
-            Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+            Presenter.printError(ungueltigeEingabe);
             continue;
         }
     }
@@ -101,15 +105,15 @@ public static Kunde hauptMenuDialog(DatenbankManagerInterface db, EmailVersandIn
             }
             if (continueChoice == 3) {
                 // Programm beenden
-                Presenter.printMessage("Programm wird beendet.");
+                Presenter.printMessage(programmBeenden);
                 System.exit(0);
             } else {
-                Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+                Presenter.printError(ungueltigeEingabe);
                 continue;
             }
         } catch (NumberFormatException e) {
             // Fehler bei der Eingabe (keine Zahl)
-            Presenter.printError("Ungültige Eingabe. Bitte 1, 2 oder 3 eingeben.");
+            Presenter.printError(ungueltigeEingabe);
             continue;
         }
     }
