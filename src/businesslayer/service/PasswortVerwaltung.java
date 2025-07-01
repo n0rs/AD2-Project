@@ -30,6 +30,7 @@ public class PasswortVerwaltung {
                 if (EmailPruefer.checkUniqueness(db, email) == false) {
                     // E-Mail existiert, Kunde wird geladen
                     kunde = db.findeKundeNachEmail(email);
+                    System.err.println(kunde);
                 } else {
                     // E-Mail nicht gefunden
                     Presenter.printError("E-Mail-Adresse nicht gefunden.");
