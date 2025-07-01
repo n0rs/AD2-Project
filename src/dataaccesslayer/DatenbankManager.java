@@ -1,7 +1,6 @@
 /* 
 Erstellt bei pgadmin4 eine neue Datenbank mit dem Namen AD2-Projekt
 (Rechtsklick auf den Server -> Create -> Database...)
-unter Rechtsklick Properties auf den Server seht sollte wie im Bild die Infos stehen
 führt die folgenden SQL-Befehle aus, um die Tabellen zu erstellen
 CREATE TABLE nutzer (
     id SERIAL PRIMARY KEY,
